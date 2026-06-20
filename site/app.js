@@ -72,19 +72,18 @@
         last = (last + 0.02 * w) / 1.02;
         data[i] = last * 3.5 * env[i];
       }
-      // Pitched water drop transients — freq sweeps down with exponential decay
+      // Damped sinusoid drops: exp(-decay*t) * sin(2π*freq*t)
+      // Physics-based model — each drop resonates at a fixed freq then decays
       const numDrops = Math.floor(35 * BUFFER_SECONDS);
       for (let d = 0; d < numDrops; d++) {
         const pos = Math.floor(Math.random() * len);
-        const f1 = 120 + Math.random() * 220;   // start pitch 120–340 Hz
-        const f2 = 30  + Math.random() * 55;   // end pitch   30–85  Hz
-        const dlen = Math.floor((0.04 + Math.random() * 0.1) * ctx.sampleRate);
-        const dropAmp = (0.15 + Math.random() * 0.3) * env[pos];
-        let phase = 0;
+        const freq  = 100 + Math.random() * 200;  // resonant freq 100–300 Hz
+        const decay = 20  + Math.random() * 30;   // decay rate 20–50
+        const dropAmp = (0.25 + Math.random() * 0.4) * env[pos];
+        const dlen = Math.floor(5 / decay * ctx.sampleRate); // ~5 time constants
         for (let j = 0; j < dlen && pos + j < len; j++) {
-          const t = j / dlen;
-          phase += 2 * Math.PI * (f1 * Math.pow(f2 / f1, t)) / ctx.sampleRate;
-          data[pos + j] += Math.sin(phase) * dropAmp * Math.exp(-t * 7);
+          const t = j / ctx.sampleRate;
+          data[pos + j] += dropAmp * Math.exp(-decay * t) * Math.sin(2 * Math.PI * freq * t);
         }
       }
     } else if (type === 'fan') {
