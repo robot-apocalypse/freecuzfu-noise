@@ -65,21 +65,22 @@
         envAmp = Math.max(0.25, Math.min(0.85, envAmp + envVel));
         env[i] = envAmp;
       }
-      // Brown noise background hiss — louder so it stays audible under drops
+      // Brown noise background hiss
       let last = 0;
       for (let i = 0; i < len; i++) {
         const w = Math.random() * 2 - 1;
         last = (last + 0.02 * w) / 1.02;
-        data[i] = last * 5.0 * env[i];
+        data[i] = last * 3.5 * env[i];
       }
-      // Damped sinusoid drops — quiet relative to background (texture, not events)
+      // Percussive drops — very fast decay so they're transients, not tones
+      // Short enough (~20-40ms) that the background has no time to be masked
       const numDrops = Math.floor(35 * BUFFER_SECONDS);
       for (let d = 0; d < numDrops; d++) {
         const pos = Math.floor(Math.random() * len);
-        const freq  = 100 + Math.random() * 200;
-        const decay = 20  + Math.random() * 30;
-        const dropAmp = (0.08 + Math.random() * 0.12) * env[pos];
-        const dlen = Math.floor(5 / decay * ctx.sampleRate);
+        const freq  = 150 + Math.random() * 200;  // 150–350 Hz
+        const decay = 80  + Math.random() * 80;   // 80–160: dies in ~30ms
+        const dropAmp = (0.3 + Math.random() * 0.3) * env[pos];
+        const dlen = Math.floor(4 / decay * ctx.sampleRate);
         for (let j = 0; j < dlen && pos + j < len; j++) {
           const t = j / ctx.sampleRate;
           data[pos + j] += dropAmp * Math.exp(-decay * t) * Math.sin(2 * Math.PI * freq * t);
