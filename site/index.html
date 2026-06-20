@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0f0f0f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Noise">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icons/icon-192.svg">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    :root {
+      --accent: #4fc3f7;
+    }
+  </style>
+  <title>Noise — FreeCuzFU</title>
+</head>
+<body>
+
+  <a href="https://freecuzfu.com" class="back-link">← FreeCuzFU</a>
+  <button id="install-btn" aria-label="Install app" hidden>↓ Install</button>
+
+  <main id="app">
+    <div class="noise-type-label" id="status-label">choose a noise</div>
+    <div class="noise-btns">
+      <button class="noise-btn" data-type="white">White</button>
+      <button class="noise-btn" data-type="pink">Pink</button>
+      <button class="noise-btn" data-type="brown">Brown</button>
+      <button class="noise-btn" data-type="blue">Blue</button>
+      <button class="noise-btn" data-type="rain">Rain</button>
+      <button class="noise-btn" data-type="fan">Fan</button>
+    </div>
+    <div class="volume-row">
+      <span class="vol-icon">◁</span>
+      <input type="range" id="volume" min="0" max="100" value="50" aria-label="Volume">
+      <span class="vol-icon">▷</span>
+    </div>
+    <div class="pulse-ring" id="pulse-ring"></div>
+  </main>
+
+  <script src="/app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>
